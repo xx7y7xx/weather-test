@@ -21,3 +21,11 @@ jobs:
         env:
           CREDENTIALS: ${{ secrets.CREDENTIALS }}
           FOLDERID: ${{ secrets.FOLDERID }}
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: |
+            debug_rainfall_image.png
+            rainfall_data_with_coordinates.csv
