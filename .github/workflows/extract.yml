@@ -1,0 +1,24 @@
+name: Split
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *" # every 30min
+
+jobs:
+  split_job:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run scripts
+        run: |
+          ./install.sh
+          ./split.sh
+          python extract_rainfall_with_coordinates.py
+        env:
+          CREDENTIALS: ${{ secrets.CREDENTIALS }}
+          FOLDERID: ${{ secrets.FOLDERID }}
