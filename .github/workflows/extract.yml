@@ -1,4 +1,4 @@
-name: Split
+name: Extract
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  split_job:
+  extract_job:
     runs-on: ubuntu-latest
 
     steps:
