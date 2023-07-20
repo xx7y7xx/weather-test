@@ -24,8 +24,10 @@ def process_image(image_path, ref_points, legend_width, color_ranges):
     for lower, upper in color_ranges:
         mask = cv2.inRange(img, lower, upper)
         masks.append(mask)
-        print(mask)
-    binary_img = cv2.bitwise_or(*masks)
+
+    binary_img = masks[0]
+    for mask in masks[1:]:
+        binary_img = cv2.bitwise_or(binary_img, mask)
 
     # 查找图像中的轮廓
     contours, _ = cv2.findContours(binary_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -90,8 +92,8 @@ color_ranges = [
     (np.array([  0, 215,   0], dtype=np.uint8), np.array([  0, 216,   0], dtype=np.uint8)),  # #00d800
     (np.array([ 85, 215,   0], dtype=np.uint8), np.array([ 85, 216,   0], dtype=np.uint8)),  # #00d855
     (np.array([  0, 252,   0], dtype=np.uint8), np.array([  0, 255,   0], dtype=np.uint8)),  # #00fc00
-    (np.array([  1, 180,   0], dtype=np.uint8), np.array([  1, 180,   0], dtype=np.uint8))  # #00b401
-    # (np.array([  2, 209,   4], dtype=np.uint8), np.array([  2, 209,   4], dtype=np.uint8))   # #04d102
+    (np.array([  1, 180,   0], dtype=np.uint8), np.array([  1, 180,   0], dtype=np.uint8)),  # #00b401
+    (np.array([  2, 209,   4], dtype=np.uint8), np.array([  2, 209,   4], dtype=np.uint8))   # #04d102
 ]
 
 rainfall_data, contours, original_img = process_image(image_path, ref_points, legend_width, color_ranges)
