@@ -5,11 +5,11 @@ import pandas as pd
 def convert_pixel_to_coordinates(pixel_x, pixel_y, ref_points):
     ref_a, ref_b = ref_points
 
-    delta_x = (ref_b['lat'] - ref_a['lat']) / (ref_b['pixel_x'] - ref_a['pixel_x'])
-    delta_y = (ref_b['lon'] - ref_a['lon']) / (ref_b['pixel_y'] - ref_a['pixel_y'])
+    delta_x = (ref_b['lon'] - ref_a['lon']) / (ref_b['pixel_x'] - ref_a['pixel_x'])
+    delta_y = (ref_b['lat'] - ref_a['lat']) / (ref_b['pixel_y'] - ref_a['pixel_y'])
 
-    lat = ref_a['lat'] + (pixel_x - ref_a['pixel_x']) * delta_x
-    lon = ref_a['lon'] + (pixel_y - ref_a['pixel_y']) * delta_y
+    lon = ref_a['lon'] + (pixel_x - ref_a['pixel_x']) * delta_x
+    lat = ref_a['lat'] + (pixel_y - ref_a['pixel_y']) * delta_y
 
     return lat, lon
 
