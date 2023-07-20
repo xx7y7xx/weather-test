@@ -47,7 +47,9 @@ def process_image(image_path, ref_points, legend_width, color_ranges):
                 'id': i + 1,
                 'area': area,
                 'latitude': lat,
-                'longitude': lon
+                'longitude': lon,
+                'pixel_x': pixel_x,
+                'pixel_y': pixel_y
             })
 
     return rainfall_data, contours, img
@@ -57,21 +59,31 @@ def save_data_to_csv(data, output_path):
     df = pd.DataFrame(data)
     df.to_csv(output_path, index=False)
 
-def create_debug_image(input_img, contours, output_path):
+def find_data_by_centroid(centroid_x, centroid_y, rainfall_data):
+    for data in rainfall_data:
+        if int(data['pixel_x']) == centroid_x and int(data['pixel_y']) == centroid_y:
+            return data
+    return None
+
+def create_debug_image(input_img, contours, rainfall_data, output_path):
     img_copy = input_img.copy()
     font = cv2.FONT_HERSHEY_SIMPLEX
-    
+    font_size = 0.5
+
     # 绘制轮廓
     cv2.drawContours(img_copy, contours, -1, (255, 0, 0), 2)
 
     for i, cnt in enumerate(contours):
-        # 计算轮廓的质心并添加ID标签
+        # 计算轮廓的质心并添加ID标签和面积
         M = cv2.moments(cnt)
         if M["m00"] != 0:
             pixel_x = int(M["m10"] / M["m00"])
             pixel_y = int(M["m01"] / M["m00"])
-            cv2.putText(img_copy, str(i + 1), (pixel_x, pixel_y), font, 1, (0, 0, 255), 2, cv2.LINE_AA)
-    
+            data = find_data_by_centroid(pixel_x, pixel_y, rainfall_data)
+            if data is not None:
+                id_area_label = f"{data['id']}/{data['area']:.2f}"
+                cv2.putText(img_copy, id_area_label, (pixel_x, pixel_y), font, font_size, (0, 0, 255), 2, cv2.LINE_AA)
+
     # 保存调试图片
     cv2.imwrite(output_path, img_copy)
 
@@ -98,4 +110,4 @@ color_ranges = [
 
 rainfall_data, contours, original_img = process_image(image_path, ref_points, legend_width, color_ranges)
 save_data_to_csv(rainfall_data, csv_output_path)
-create_debug_image(original_img, contours, debug_image_output_path)
+create_debug_image(original_img, contours, rainfall_data, debug_image_output_path)
