@@ -2,15 +2,15 @@ name: Split
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "*/30 * * * *" # every 30min
+  push:
+    branches:
+      - main
 
 jobs:
   split_job:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -18,14 +18,11 @@ jobs:
         run: |
           ./install.sh
           python extract_rainfall_with_coordinates.py
-        env:
-          CREDENTIALS: ${{ secrets.CREDENTIALS }}
-          FOLDERID: ${{ secrets.FOLDERID }}
 
-      - name: Archive code coverage results
+      - name: Archive results
         uses: actions/upload-artifact@v3
         with:
-          name: code-coverage-report
+          name: rainfall_data
           path: |
             debug_rainfall_image.png
             rainfall_data_with_coordinates.csv
