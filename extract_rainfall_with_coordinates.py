@@ -93,6 +93,7 @@ image_path = 'radar_image.png'
 csv_output_path = 'rainfall_data_with_coordinates.csv'
 debug_image_output_path = 'debug_rainfall_image.png'
 
+# To ref the left-top and bottom-right point to the map coordinates, using QGIS
 ref_points = [
     {'pixel_x': 0, 'pixel_y': 0, 'lat': 14.981259928342144, 'lon': 99.52284727468773},
     {'pixel_x': 965, 'pixel_y': 800, 'lat': 12.728301173259432, 'lon': 102.2016701846946}
