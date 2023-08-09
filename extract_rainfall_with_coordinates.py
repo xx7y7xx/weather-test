@@ -16,10 +16,10 @@ def convert_pixel_to_coordinates(pixel_x, pixel_y, ref_points):
 def process_image(image_path, ref_points, legend_width, color_ranges):
     img = cv2.imread(image_path)
 
-    # 裁剪图像并忽略图例区域
+    # Crop the image and ignore the legend area
     img = img[:, legend_width:]
 
-    # 提取在设定颜色范围内的像素
+    # Extract pixels within the set color range
     masks = []
     for lower, upper in color_ranges:
         mask = cv2.inRange(img, lower, upper)
@@ -29,10 +29,10 @@ def process_image(image_path, ref_points, legend_width, color_ranges):
     for mask in masks[1:]:
         binary_img = cv2.bitwise_or(binary_img, mask)
 
-    # 查找图像中的轮廓
+    # Find contours in the image
     contours, _ = cv2.findContours(binary_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    # 提取降水量信息以及经度和纬度
+    # Extract precipitation information and longitude and latitude
     rainfall_data = []
     for i, cnt in enumerate(contours):
         area = cv2.contourArea(cnt)
@@ -70,11 +70,11 @@ def create_debug_image(input_img, contours, rainfall_data, output_path):
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_size = 0.5
 
-    # 绘制轮廓
+    # Draw contours
     cv2.drawContours(img_copy, contours, -1, (255, 0, 0), 2)
 
     for i, cnt in enumerate(contours):
-        # 计算轮廓的质心并添加ID标签和面积
+        # Calculate the centroid of the contour and add an ID label
         M = cv2.moments(cnt)
         if M["m00"] != 0:
             pixel_x = int(M["m10"] / M["m00"])
@@ -84,11 +84,11 @@ def create_debug_image(input_img, contours, rainfall_data, output_path):
                 id_area_label = f"{data['id']}/{data['area']:.2f}"
                 cv2.putText(img_copy, id_area_label, (pixel_x, pixel_y), font, font_size, (0, 0, 255), 2, cv2.LINE_AA)
 
-    # 保存调试图片
+    # Save the debug image
     cv2.imwrite(output_path, img_copy)
 
 
-# 示例
+# Example
 image_path = 'radar_image.png'
 csv_output_path = 'rainfall_data_with_coordinates.csv'
 debug_image_output_path = 'debug_rainfall_image.png'
@@ -99,7 +99,7 @@ ref_points = [
 ]
 legend_width = 73
 
-# 定义颜色范围
+# Define color ranges
 color_ranges = [
     (np.array([  0, 215,   0], dtype=np.uint8), np.array([  0, 216,   0], dtype=np.uint8)),  # #00d800
     (np.array([ 85, 215,   0], dtype=np.uint8), np.array([ 85, 216,   0], dtype=np.uint8)),  # #00d855
